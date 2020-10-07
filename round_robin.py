@@ -10,17 +10,11 @@ from ordenacao import ordena_ingresso
 
 def round_robin(processos, quantum):
     tempo_espera_total = 0
-    tempo_turnaround_total = 0
-    calc_tempo_resposta_total = 0
-
-    # st.write('Sem ordenação')
-    # for i in range(len(processos)):
-    #     st.write(processos[i].pid)
+    tempo_execucao_total = 0
+    # tempo_turnaround_total = 0
+    # calc_tempo_resposta_total = 0
 
     ordena_ingresso(processos)
-    # st.write('Ordenado')
-    # for i in range(len(processos)):
-    #     st.write(processos[i].pid)
 
     round_robin_tempo_espera(processos, quantum)
     round_robin_turn_around(processos)
@@ -30,16 +24,12 @@ def round_robin(processos, quantum):
         proc.tempo_retorno = proc.ingresso + proc.duracao + proc.tempo_espera
 
         tempo_espera_total += proc.tempo_espera
-        tempo_turnaround_total += proc.turnaround
-        calc_tempo_resposta_total += proc.tempo_resposta
+        # tempo_turnaround_total += proc.turnaround
+        # calc_tempo_resposta_total += proc.tempo_resposta
 
     round_robin_grafico(processos, quantum)
-
-    st.write("Tempo de Espera Médio: " + str(tempo_espera_total / len(processos)))
-    st.write("Tempo de Turn Around Médio: " + str(tempo_turnaround_total / len(processos)))
-    st.write("Tempo de Resposta Médio: " + str(calc_tempo_resposta_total / len(processos)))
-
     round_robin_tabela(processos)
+    round_robin_medias(tempo_execucao_total, tempo_espera_total, len(processos))
 
 def round_robin_tempo_espera(processos, quantum):
     tempo_atual = 0
@@ -122,23 +112,28 @@ def round_robin_grafico(processos, quantum):
             else:
                 gantt_data[i][2] = duracao_total
 
+    trocas_contexto_total = 0
+    for i in range(len(gantt_data)):
+        if i != 1:
+            if gantt_data[i][0] != gantt_data[i-1][0]:
+                trocas_contexto_total += 1
+
     gantt(gantt_data)
 
-    pass
+    st.write('**Trocas de Contexto:** ' + str(trocas_contexto_total))
 
 def round_robin_tabela(processos):
     data = []
 
     for proc in processos:
-        data.append([proc.pid, proc.ingresso, proc.duracao, proc.tempo_retorno, proc.tempo_resposta, proc.tempo_espera, proc.turnaround])
+        data.append([proc.pid, proc.ingresso, proc.duracao, proc.tempo_resposta, proc.tempo_espera, proc.tempo_retorno])
     
-    df = pd.DataFrame(data, columns=['PID', 'Ingresso', 'Duração', 'Tempo de Retorno', 'Tempo de Resposta', 'Tempo de Espera', 'Tempo de Turn Around'])
+    df = pd.DataFrame(data, columns=['PID', 'Ingresso', 'Duração', 'Tempo de Resposta', 'Tempo de Espera', 'Tempo de Retorno'])
     st.write(df)
-    # for i in range(len(processos)):
-    #     data.append([])
-    #     st.write(processos[i].pid)
-    #     st.write(processos[i].duracao)
-    #     st.write(processos[i].tempo_espera)
-    #     st.write(processos[i].turnaround)
-    #     st.write(processos[i].tempo_resposta)
-    #     st.write(processos[i].tempo_retorno)
+
+def round_robin_medias(tempo_execucao_total, tempo_espera_total, qtde_processos):
+    st.write('**Médias (em segundos)**')
+    data = []
+    data.append([round(tempo_execucao_total/qtde_processos, 2), round(tempo_espera_total/qtde_processos, 2)])
+    df = pd.DataFrame(data, columns=['Tempo Médio de Execução', 'Tempo Médio de Espera'])
+    st.write(df)
