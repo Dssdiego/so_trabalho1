@@ -40,7 +40,7 @@ def inicia_processos(processos):
         proc.finalizado = False
 
 def algo_round_robin():
-    st.write('Para mudar os processos, basta alterar o .csv :wink:')
+    st.write('Para mudar os processos, basta alterar [essa planilha](https://docs.google.com/spreadsheets/d/1vTeJ80BnAhXqQjpO9ml0bRAjikwSyBhkKS9iH1vPRe8/edit?usp=sharing) e atualizar a página :wink:')
 
     # Busca os processos de uma planilha do Google
     df = pd.read_csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vRqjZdPyFphn5nD9vwbv94obvpuY4vlPTRz31wLe_SaRCYSKGBZzvlIQkNd51rcow2Npua4RTLyf4PL/pub?output=csv')
