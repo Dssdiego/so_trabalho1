@@ -1,3 +1,5 @@
+# Autor: Diego Santos Seabra
+
 class Processo:
     # TODO: Implementar prioridade?
     def __init__(self, pid, ingresso, duracao):

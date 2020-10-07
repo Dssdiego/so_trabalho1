@@ -1,4 +1,5 @@
-# import sys
+# Autor: Diego Santos Seabra
+
 import streamlit as st
 
 def ordena_ingresso(arr):
