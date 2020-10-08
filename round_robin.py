@@ -1,4 +1,5 @@
 # Autor: Diego Santos Seabra
+# Algoritmo: Round Robin
 
 import streamlit as st
 import matplotlib.pyplot as plt
@@ -7,10 +8,11 @@ import pandas as pd
 
 from graficos import gantt
 from ordenacao import ordena_ingresso
+from tabelas import tabela_geral, tabela_medias
 
 def round_robin(processos, quantum):
     tempo_espera_total = 0
-    tempo_execucao_total = 0
+    tempo_duracao_total = 0
     # tempo_turnaround_total = 0
     # calc_tempo_resposta_total = 0
 
@@ -24,12 +26,13 @@ def round_robin(processos, quantum):
         proc.tempo_retorno = proc.ingresso + proc.duracao + proc.tempo_espera
 
         tempo_espera_total += proc.tempo_espera
+        tempo_duracao_total += proc.duracao
         # tempo_turnaround_total += proc.turnaround
         # calc_tempo_resposta_total += proc.tempo_resposta
 
     round_robin_grafico(processos, quantum)
-    round_robin_tabela(processos)
-    round_robin_medias(tempo_execucao_total, tempo_espera_total, len(processos))
+    tabela_geral(processos)
+    tabela_medias(tempo_duracao_total, tempo_espera_total, len(processos))
 
 def round_robin_tempo_espera(processos, quantum):
     tempo_atual = 0
@@ -121,19 +124,3 @@ def round_robin_grafico(processos, quantum):
     gantt(gantt_data)
 
     st.write('**Trocas de Contexto:** ' + str(trocas_contexto_total))
-
-def round_robin_tabela(processos):
-    data = []
-
-    for proc in processos:
-        data.append([proc.pid, proc.ingresso, proc.duracao, proc.tempo_resposta, proc.tempo_espera, proc.tempo_retorno])
-    
-    df = pd.DataFrame(data, columns=['PID', 'Ingresso', 'Duração', 'Tempo de Resposta', 'Tempo de Espera', 'Tempo de Retorno'])
-    st.write(df)
-
-def round_robin_medias(tempo_execucao_total, tempo_espera_total, qtde_processos):
-    st.write('**Médias (em segundos)**')
-    data = []
-    data.append([round(tempo_execucao_total/qtde_processos, 2), round(tempo_espera_total/qtde_processos, 2)])
-    df = pd.DataFrame(data, columns=['Tempo Médio de Execução', 'Tempo Médio de Espera'])
-    st.write(df)

@@ -6,13 +6,17 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from processo import Processo
 
+# Algoritmos
 from round_robin import round_robin, round_robin_tempo_espera
+from menor_primeiro import menor_primeiro
 
 opcoes = ['1. Apresentação', 
           '2. Definições e Conceitos', 
           '3. Round Robin - Vantagens e Desvantagens', 
           '4. Round Robin - Demonstração', 
-        #   '5. Comparação de Resultados'
+          '5. Menor Primeiro - Vantagens e Desvantagens', 
+          '6. Menor Primeiro - Demonstração', 
+          '7. Obrigado!'
           ]
 processos = []
 
@@ -44,8 +48,14 @@ def main():
     if visualizacao == '4. Round Robin - Demonstração':
         algo_round_robin()
 
-    if visualizacao == '5. Comparação de Resultados':
-        comparacao()
+    if visualizacao == '5. Menor Primeiro - Vantagens e Desvantagens':
+        vd_menor_primeiro()
+
+    if visualizacao == '6. Menor Primeiro - Demonstração':
+        algo_menor_primeiro()
+
+    if visualizacao == '7. Obrigado!':
+        obrigado()
 
 def apresentacao():
     st.header('Apresentação')
@@ -90,13 +100,21 @@ def definicoes_conceitos():
 def vd_round_robin():
     st.header('Round Robin - Vantagens e Desvantagens')
     st.write('**Vantagens**')
-    st.write('Cada processo é servido pela CPU por um quantum de tempo fixo, portanto, todos os processos recebem a mesma prioridade. É um algoritmo "justo".')
-    st.write('Melhora drasticamente os tempos médios de resposta.')
-    st.write('Um quantum pequeno permite que o sistema percorra os processos rapidamente, porém aumenta a troca de contextos (veja abaixo).')
+    st.write('→ Cada processo é servido pela CPU por um quantum de tempo fixo, portanto, todos os processos recebem a mesma prioridade. É um algoritmo "justo".')
+    st.write('→ Melhora drasticamente os tempos médios de resposta.')
+    st.write('→ Um quantum pequeno permite que o sistema percorra os processos rapidamente, porém aumenta a troca de contextos (veja abaixo).')
     st.write('**Desvantagens**')
-    st.write('A taxa de transferência do Round Robin depende muito da escolha da duração do quantum de tempo. Se o quantum de tempo for maior do que o necessário, ele tende a exibir o mesmo comportamento do FCFS (First Come, First Served).')
-    st.write('Se o quantum de tempo for menor do que o necessário, o número de vezes que a CPU muda de um processo para outro aumenta (troca de contexto). Isso leva à diminuição da eficiência da CPU, pois a CPU fica ocupada com a mudança de contexto e "deixa de lado" o trabalho real de executar o processo.')
-    st.write('Seu tempo médio de espera costuma ser longo.')
+    st.write('→ A taxa de transferência do Round Robin depende muito da escolha da duração do quantum de tempo. Se o quantum de tempo for maior do que o necessário, ele tende a exibir o mesmo comportamento do FCFS (First Come, First Served).')
+    st.write('→ Se o quantum de tempo for menor do que o necessário, o número de vezes que a CPU muda de um processo para outro aumenta (troca de contexto). Isso leva à diminuição da eficiência da CPU, pois a CPU fica ocupada com a mudança de contexto e "deixa de lado" o trabalho real de executar o processo.')
+    st.write('→ Seu tempo médio de espera costuma ser longo.')
+
+def vd_menor_primeiro():
+    st.header('Menor Primeiro (SJF) - Vantagens e Desvantagens')
+    st.write('**Vantagens**')
+    st.write('→ Processos mais curtos são favorecidos.')
+    st.write('→ Mais processos podem ser executados em menos tempo. Isso aumenta o rendimento do processador.')
+    st.write('**Desvantagens**')
+    st.write('→ Pode causar inanição, se processos mais curtos continuarem ocorrendo. Ou seja, processos longos podem nunca ocorrer e "morrer de fome". Porém este problema pode ser resolvido com envelhecimento (aging).')
 
 def inicia_processos(processos):
     for proc in processos:
@@ -107,10 +125,20 @@ def inicia_processos(processos):
 
 def algo_round_robin():
     st.header('Round Robin - Demonstração')
-    st.write('Para mudar os processos, basta alterar [essa planilha](https://docs.google.com/spreadsheets/d/1vTeJ80BnAhXqQjpO9ml0bRAjikwSyBhkKS9iH1vPRe8/edit?usp=sharing) e atualizar a página :wink:')
+    # st.write('Para mudar os processos, basta alterar [essa planilha](https://docs.google.com/spreadsheets/d/1vTeJ80BnAhXqQjpO9ml0bRAjikwSyBhkKS9iH1vPRe8/edit?usp=sharing) e atualizar a página :wink:')
+
+    escolhe_proc = st.selectbox(label='Escolha o csv para ser carregado',options=['Demonstração 1', 'Demonstração 2', 'Demonstração 3'])
+    if (escolhe_proc == 'Demonstração 1'):
+        df = pd.read_csv('round_robin.csv')
+
+    if (escolhe_proc == 'Demonstração 2'):
+        df = pd.read_csv('round_robin2.csv')
+
+    if (escolhe_proc == 'Demonstração 3'):
+        df = pd.read_csv('round_robin3.csv')
 
     # Busca os processos de uma planilha do Google
-    df = pd.read_csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vRqjZdPyFphn5nD9vwbv94obvpuY4vlPTRz31wLe_SaRCYSKGBZzvlIQkNd51rcow2Npua4RTLyf4PL/pub?output=csv')
+    # df = pd.read_csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vRqjZdPyFphn5nD9vwbv94obvpuY4vlPTRz31wLe_SaRCYSKGBZzvlIQkNd51rcow2Npua4RTLyf4PL/pub?output=csv')
     # df = pd.read_csv('processos.csv')
 
     st.write('**Processos**')
@@ -129,8 +157,38 @@ def algo_round_robin():
 
     round_robin(processos, quantum)
 
-def comparacao():
-    st.header('Comparação de Resultados')
+def algo_menor_primeiro():
+    st.header('Menor Primeiro (SJF) - Demonstração')
+
+    escolhe_proc = st.selectbox(label='Escolha o csv para ser carregado',options=['Demonstração 1', 'Demonstração 2', 'Demonstração 3'])
+    if (escolhe_proc == 'Demonstração 1'):
+        df = pd.read_csv('menor_primeiro.csv')
+
+    if (escolhe_proc == 'Demonstração 2'):
+        df = pd.read_csv('menor_primeiro2.csv')
+
+    if (escolhe_proc == 'Demonstração 3'):
+        df = pd.read_csv('menor_primeiro3.csv')
+
+    # Busca os processos de uma planilha do Google
+    # df = pd.read_csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vRqjZdPyFphn5nD9vwbv94obvpuY4vlPTRz31wLe_SaRCYSKGBZzvlIQkNd51rcow2Npua4RTLyf4PL/pub?output=csv')
+    # df = pd.read_csv('processos.csv')
+
+    st.write('**Processos**')
+    st.write(df)
+
+    # Lista de Processos
+    processos = []
+
+    # Cria lista de processos
+    for index, proc in df.iterrows():
+        processos.append(Processo(proc['id'], proc['ingresso'], proc['duracao']))
+    inicia_processos(processos)
+
+    menor_primeiro(processos)
+
+def obrigado():
+    st.title('Obrigado!')
 
     pass
 
