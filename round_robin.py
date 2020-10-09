@@ -13,8 +13,6 @@ from tabelas import tabela_geral, tabela_medias
 def round_robin(processos, quantum):
     tempo_espera_total = 0
     tempo_duracao_total = 0
-    # tempo_turnaround_total = 0
-    # calc_tempo_resposta_total = 0
 
     ordena_ingresso(processos)
 
@@ -27,8 +25,6 @@ def round_robin(processos, quantum):
 
         tempo_espera_total += proc.tempo_espera
         tempo_duracao_total += proc.duracao
-        # tempo_turnaround_total += proc.turnaround
-        # calc_tempo_resposta_total += proc.tempo_resposta
 
     round_robin_grafico(processos, quantum)
     tabela_geral(processos)

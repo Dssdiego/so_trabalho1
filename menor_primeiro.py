@@ -11,18 +11,6 @@ from tabelas import tabela_geral, tabela_medias
 def menor_primeiro(processos):
     tempo_espera_total = 0
     tempo_duracao_total = 0
-    # tempo_turnaround_total = 0
-    # tempo_resposta_total = 0
-
-    # st.write('Antes de ordenar')
-    # for i in range(len(processos)):
-    #     st.write(processos[i].pid)
-
-    # ordena_retorno(processos)
-    # st.write('Depois de ordenar')
-    # st.write(processos.sort())
-    # for i in range(len(processos)):
-    #     st.write(processos[i].pid)
 
     menor_primeiro_calcula_tempo(processos)
     menor_primeiro_turn_around(processos)
@@ -33,7 +21,6 @@ def menor_primeiro(processos):
 
         tempo_espera_total += proc.tempo_espera
         tempo_duracao_total += proc.duracao
-        # tempo_resposta_total += proc.tempo_resposta
 
     processos = ordena_retorno(processos)
 
